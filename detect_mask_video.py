@@ -102,16 +102,20 @@ print("[INFO] starting video stream...")
 #vs = VideoStream(src=0).start()
 vs = cv2.VideoCapture('test1.mp4')
 time.sleep(2.0)
-writer = cv2.VideoWriter('out.mp4', cv2.VideoWriter_fourcc(*'mp4v'), vs.get(cv2.CAP_PROP_FPS), (vs.get(cv2.CAP_PROP_FRAME_WIDTH), vs.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+w = 400
+h = 225
+writer = cv2.VideoWriter('out.mp4', cv2.VideoWriter_fourcc(*'mp4v'), vs.get(cv2.CAP_PROP_FPS), (w,h))
 i = 0
 # loop over the frames from the video stream
-while i != 15:
+status, frame = vs.read()
+
+while status == True:
 	# grab the frame from the threaded video stream and resize it
 	# to have a maximum width of 400 pixels
-    print("Testing frame: ", vs.read())
-	frame = vs.read()
+	print("Testing frame: ", vs.read())
+	
 	frame = imutils.resize(frame, width=400)
-
+	print("Форма фрейма: ", frame.shape)
 	# detect faces in the frame and determine if they are wearing a
 	# face mask or not
 	(locs, preds) = detect_and_predict_mask(frame, faceNet, maskNet)
@@ -137,6 +141,8 @@ while i != 15:
 			cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
 		cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
 	writer.write(frame)
+	status, frame = vs.read()
+	
 	# show the output frame
 	#cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
@@ -146,5 +152,4 @@ while i != 15:
 		break
 
 # do a bit of cleanup
-cv2.destroyAllWindows()
-vs.stop()
+writer.release()
