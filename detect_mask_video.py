@@ -100,20 +100,21 @@ maskNet = load_model(args["model"])
 # initialize the video stream and allow the camera sensor to warm up
 print("[INFO] starting video stream...")
 #vs = VideoStream(src=0).start()
-vs = cv2.VideoCapture('test1.mp4')
+vs = cv2.VideoCapture('test3.mp4')
 time.sleep(2.0)
 w = 400
 h = 225
 writer = cv2.VideoWriter('out.mp4', cv2.VideoWriter_fourcc(*'mp4v'), vs.get(cv2.CAP_PROP_FPS), (w,h))
 i = 0
+total_frames = vs.get(cv2.CAP_PROP_FRAME_COUNT)
 # loop over the frames from the video stream
 status, frame = vs.read()
 
 while status == True:
 	# grab the frame from the threaded video stream and resize it
 	# to have a maximum width of 400 pixels
-	print("Testing frame: ", vs.read())
-	
+	print("Обработано: ", i, " из ", total_frames)
+	i += 1
 	frame = imutils.resize(frame, width=400)
 	print("Форма фрейма: ", frame.shape)
 	# detect faces in the frame and determine if they are wearing a
